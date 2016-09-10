@@ -6,6 +6,7 @@ public class SingleItem {
     private int count;
     private double support;
     private double confidence;
+    private int check;
 
     public SingleItem(int itemID, double MIS, int count, double support, double confidence) {
         this.itemID = itemID;
