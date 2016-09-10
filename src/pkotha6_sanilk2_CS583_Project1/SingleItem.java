@@ -2,6 +2,13 @@ package pkotha6_sanilk2_CS583_Project1;
 
 import java.util.Comparator;
 
+class MISComparator implements Comparator<SingleItem> {
+    @Override
+    public int compare(SingleItem o1, SingleItem o2) {
+        return (o1.getMIS() > o2.getMIS() ? 1 : (o1.getMIS() < o2.getMIS() ? -1 : 0));
+    }
+}
+
 public class SingleItem implements Comparator<SingleItem> {
     private int itemID;
     private double MIS;
@@ -48,6 +55,11 @@ public class SingleItem implements Comparator<SingleItem> {
 
     public void setSupport(double support) {
         this.support = support;
+    }
+
+    @Override
+    public String toString() {
+        return new String("item = " + this.itemID + ", count = " + this.count + ", MIS = " + this.MIS + ", support = " + this.support);
     }
 
     @Override
