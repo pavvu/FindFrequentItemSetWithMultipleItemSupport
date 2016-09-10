@@ -1,13 +1,28 @@
 package pkotha6_sanilk2_CS583_Project1;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Transactions {
-    private List<ItemSet> transaction;
+    private List<HashSet<Integer>> transactions;
 
-    public Transactions(List<ItemSet> currentTransaction) {
-        this.transaction = new ArrayList<ItemSet>(currentTransaction);
+    public Transactions(List<HashSet<Integer>> transactions) {
+        this.transactions = new ArrayList<HashSet<Integer>>(transactions);
     }
 
+    public int getItemSetCount(ItemSet items) {
+        if(items == null) {
+            return 0;
+        }
+
+        int count = 0;
+        for(Set<Integer> t : transactions) {
+            if(t.containsAll(items.getItemsSet())) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

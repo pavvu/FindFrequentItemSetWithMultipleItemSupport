@@ -1,16 +1,13 @@
 package pkotha6_sanilk2_CS583_Project1;
 
-import java.util.List;
+import java.util.Set;
 
 public class ItemSet {
-    private List<SingleItem> itemsSet;
+    private Set<Integer> itemsSet;
     private int count;
 
-    public List<SingleItem> getItemsSet() {
+    public Set<Integer> getItemsSet() {
         return itemsSet;
-    }
-    public void setItemsSet(List<SingleItem> itemsSet) {
-        this.itemsSet = itemsSet;
     }
     public int getCount() {
         return count;

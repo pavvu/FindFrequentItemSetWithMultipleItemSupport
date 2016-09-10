@@ -1,10 +1,15 @@
 package pkotha6_sanilk2_CS583_Project1;
 
-public class SingleItem {
+import java.util.Comparator;
+
+public class SingleItem implements Comparator<SingleItem> {
     private int itemID;
     private double MIS;
     private int count;
     private double support;
+
+    public SingleItem() {
+    }
 
     public SingleItem(int itemID, double MIS, int count, double support, double confidence) {
         this.itemID = itemID;
@@ -43,5 +48,10 @@ public class SingleItem {
 
     public void setSupport(double support) {
         this.support = support;
+    }
+
+    @Override
+    public int compare(SingleItem o1, SingleItem o2) {
+        return (o1.getItemID() > o2.getItemID() ? 1 : (o1.getItemID() < o2.getItemID() ? -1 : 0));
     }
 }
