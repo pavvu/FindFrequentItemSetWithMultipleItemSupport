@@ -9,7 +9,7 @@ public class Transactions {
     public static List<HashSet<Integer>> transactions;
 
     public Transactions(List<HashSet<Integer>> transactions) {
-        this.transactions = new ArrayList<HashSet<Integer>>(transactions);
+        transactions = new ArrayList<HashSet<Integer>>(transactions);
     }
 
     public int getItemSetCount(ItemSet items) {
