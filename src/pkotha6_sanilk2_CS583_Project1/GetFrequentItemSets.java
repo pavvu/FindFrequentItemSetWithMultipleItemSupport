@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +17,8 @@ import java.util.TreeSet;
 
 public class GetFrequentItemSets {
 
-    public static TreeSet<SingleItem> SingleItemsSet;
+    private static final List SingleItemSet = null;
+    public  static TreeSet<SingleItem> SingleItemsSet = new TreeSet<>(new MISComparator());
 
     public static void readInput() throws IOException {
 	BufferedReader  br = new BufferedReader(new FileReader("input-data.txt"));
@@ -53,7 +56,7 @@ public class GetFrequentItemSets {
 
     }
 
-    public static void buildListofSingleItems(Map<Integer, Integer> singleItemCount, int noOfTransactions) throws IOException {
+    public static void buildListofSingleItems(Map<Integer, Integer> singleItemCount, double noOfTransactions) throws IOException {
 	Map<Integer, Double> itemMisMap = getMIS();
 	int count = 0;
 	SingleItem currSingleItem = null;
@@ -65,6 +68,11 @@ public class GetFrequentItemSets {
 	    currSingleItem.setMIS(itemMisMap.get(itemId));
 	    currSingleItem.setSupport(count/noOfTransactions);
 	    SingleItemsSet.add(currSingleItem);
+	}
+	
+	// printing the built datastrcture
+	for(SingleItem s : SingleItemsSet) {
+	    System.out.println(s);
 	}
     }
 
@@ -92,7 +100,8 @@ public class GetFrequentItemSets {
     public static void main(String[] args) {
 	//readInput();
 	try {
-	    getMIS();
+	    readInput();
+	    //getMIS();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
