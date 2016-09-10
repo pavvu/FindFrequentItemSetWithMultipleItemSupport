@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Transactions {
-    private List<HashSet<Integer>> transactions;
+    public static List<HashSet<Integer>> transactions;
 
     public Transactions(List<HashSet<Integer>> transactions) {
         this.transactions = new ArrayList<HashSet<Integer>>(transactions);
