@@ -5,14 +5,12 @@ public class SingleItem {
     private double MIS;
     private int count;
     private double support;
-    private double confidence;
 
     public SingleItem(int itemID, double MIS, int count, double support, double confidence) {
         this.itemID = itemID;
         this.MIS = MIS;
         this.count = count;
         this.support = support;
-        this.confidence = confidence;
     }
 
     public int getItemID() {
@@ -47,11 +45,4 @@ public class SingleItem {
         this.support = support;
     }
 
-    public double getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(double confidence) {
-        this.confidence = confidence;
-    }
 }
