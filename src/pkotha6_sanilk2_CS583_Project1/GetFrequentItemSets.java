@@ -90,6 +90,7 @@ public class GetFrequentItemSets {
         return itemMisMap;
     }
 
+
     public static void generateL() {
         if(singleItemSet == null) {
             return;
@@ -115,30 +116,46 @@ public class GetFrequentItemSets {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            readInput();
-            /*ItemSet i = new ItemSet();
-            i.add(20);
-            i.add(30);
-            i.add(40);
-            System.out.println(Transactions.getItemSetCount(i));
-            //0 because it is not present.
 
-            i = new ItemSet();
-            i.add(20);
-            i.add(30);
-            i.add(50);
+    
+    public static TreeSet<SingleItem> generateF1() {
+	TreeSet<SingleItem> F1 = new TreeSet<SingleItem>(new );
+	for(SingleItem item : SingleItemsSet) {
+	    if(item.getSupport() > item.getMIS()) {
+		F1.add(item);
+	    }
+	}
+	
+	for(SingleItem item : F1) {
+	    System.out.println(item);
+	}
+	return F1;
+    }
+    
+    public static void main(String[] args) throws IOException {
+        readInput();
+        System.out.println("generating F1");
+        generateL();
+        generateF1();
+	TestSuites();
+        
+    }
+    
+    public static void TestSuites() throws IOException {
+	ItemSet i = new ItemSet();
+	i.add(20);
+	i.add(30);
+	i.add(40);
+	System.out.println(Transactions.getItemSetCount(i)==0);
+	//0 because it is not present.
 
-            System.out.println(Transactions.getItemSetCount(i));
-            //2 because it is present in first and last.
-             */
-            generateL();
+	i = new ItemSet();
+	i.add(20);
+	i.add(30);
+	i.add(50);
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+	System.out.println(Transactions.getItemSetCount(i)==2);
+	//2 because it is present in first and last.
     }
 
 }
