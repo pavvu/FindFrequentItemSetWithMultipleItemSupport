@@ -12,7 +12,7 @@ public class Transactions {
         transactions = new ArrayList<HashSet<Integer>>(transactions);
     }
 
-    public int getItemSetCount(ItemSet items) {
+    public static int getItemSetCount(ItemSet items) {
         if(items == null) {
             return 0;
         }
