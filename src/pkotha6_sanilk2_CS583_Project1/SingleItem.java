@@ -5,7 +5,7 @@ import java.util.Comparator;
 class MISComparator implements Comparator<SingleItem> {
     @Override
     public int compare(SingleItem o1, SingleItem o2) {
-        return (o1.getMIS() > o2.getMIS() ? 1 : (o1.getMIS() < o2.getMIS() ? -1 : 0));
+        return (o1.getMIS() > o2.getMIS() ? 1 :  -1 );
     }
 }
 

@@ -114,13 +114,18 @@ public class GetFrequentItemSets {
                 }
             }
         }
+        
+        System.out.println("prininting L");
+        for (SingleItem item : singleItemSet) {
+            System.out.println(item);
+        }
     }
 
 
     
     public static TreeSet<SingleItem> generateF1() {
-	TreeSet<SingleItem> F1 = new TreeSet<SingleItem>(new );
-	for(SingleItem item : SingleItemsSet) {
+	TreeSet<SingleItem> F1 = new TreeSet<SingleItem>(new IDComparator());
+	for(SingleItem item : singleItemSet) {
 	    if(item.getSupport() > item.getMIS()) {
 		F1.add(item);
 	    }
@@ -133,12 +138,11 @@ public class GetFrequentItemSets {
     }
     
     public static void main(String[] args) throws IOException {
-        readInput();
-        System.out.println("generating F1");
+        readInput();       
         generateL();
+        System.out.println("generating F1");
         generateF1();
 	TestSuites();
-        
     }
     
     public static void TestSuites() throws IOException {
