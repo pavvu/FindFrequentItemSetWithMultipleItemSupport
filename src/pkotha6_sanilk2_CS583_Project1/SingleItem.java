@@ -9,7 +9,14 @@ class MISComparator implements Comparator<SingleItem> {
     }
 }
 
-public class SingleItem implements Comparator<SingleItem> {
+class IDComparator implements Comparator<SingleItem> {
+    @Override
+    public int compare(SingleItem o1, SingleItem o2) {
+        return (o1.getItemID() > o2.getItemID() ? 1 : (o1.getItemID() < o2.getItemID() ? -1 : 0));
+    }
+}
+
+public class SingleItem {
     private int itemID;
     private double MIS;
     private int count;
@@ -60,10 +67,5 @@ public class SingleItem implements Comparator<SingleItem> {
     @Override
     public String toString() {
         return new String("item = " + this.itemID + ", count = " + this.count + ", MIS = " + this.MIS + ", support = " + this.support);
-    }
-
-    @Override
-    public int compare(SingleItem o1, SingleItem o2) {
-        return (o1.getItemID() > o2.getItemID() ? 1 : (o1.getItemID() < o2.getItemID() ? -1 : 0));
     }
 }

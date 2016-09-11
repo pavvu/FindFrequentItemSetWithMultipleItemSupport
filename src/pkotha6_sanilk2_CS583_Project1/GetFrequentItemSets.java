@@ -6,13 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class GetFrequentItemSets {
-    public  static TreeSet<SingleItem> SingleItemsSet = new TreeSet<>(new MISComparator());
+    public  static TreeSet<SingleItem> singleItemSet = new TreeSet<>(new MISComparator());
 
     public static void readInput() throws IOException {
         BufferedReader  br = new BufferedReader(new FileReader("input-data.txt"));
@@ -60,11 +61,11 @@ public class GetFrequentItemSets {
             currSingleItem.setItemID(itemId);
             currSingleItem.setMIS(itemMisMap.get(itemId));
             currSingleItem.setSupport(count/noOfTransactions);
-            SingleItemsSet.add(currSingleItem);
+            singleItemSet.add(currSingleItem);
         }
 
         // printing the built datastructure
-        for(SingleItem s : SingleItemsSet) {
+        for(SingleItem s : singleItemSet) {
             System.out.println(s);
         }
     }
@@ -89,11 +90,35 @@ public class GetFrequentItemSets {
         return itemMisMap;
     }
 
+    public static void generateL() {
+        if(singleItemSet == null) {
+            return;
+        }
+
+        SingleItem firstItem = null;
+        SingleItem curItem = null; 
+        for(Iterator<SingleItem> i = singleItemSet.iterator(); i.hasNext();) {
+            curItem = i.next();
+            if(firstItem == null) {
+                if(curItem.getSupport() >= curItem.getMIS()) {
+                    firstItem = curItem;
+                }
+                else {
+                    singleItemSet.remove(curItem);
+                }
+            }
+            else {
+                if(curItem.getSupport() < firstItem.getMIS()) {
+                    singleItemSet.remove(curItem);
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        //readInput();
         try {
             readInput();
-            ItemSet i = new ItemSet();
+            /*ItemSet i = new ItemSet();
             i.add(20);
             i.add(30);
             i.add(40);
@@ -107,8 +132,9 @@ public class GetFrequentItemSets {
 
             System.out.println(Transactions.getItemSetCount(i));
             //2 because it is present in first and last.
+             */
+            generateL();
 
-            //getMIS();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
