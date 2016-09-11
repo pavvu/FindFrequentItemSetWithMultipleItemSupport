@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -137,11 +138,41 @@ public class GetFrequentItemSets {
 	return F1;
     }
     
+    public static void generateLevel2Candidate(double p) {
+	ArrayList<ItemSet> c2 = new ArrayList<>();
+	ArrayList<SingleItem> listL = new ArrayList<SingleItem>(singleItemSet);
+	for(int index =0 ; index < listL.size(); index++) {
+	    SingleItem currItem = listL.get(index);
+	    if(currItem.getSupport() >= currItem.getMIS()){
+		for(int h = index+1; h < listL.size(); h++) {
+		    SingleItem secondItem = listL.get(h);
+		    if ( (secondItem.getSupport() >= secondItem.getMIS()) &&
+			 (Math.abs(currItem.getSupport() - secondItem.getSupport())<=p)
+		        ) {
+			ItemSet currItemSet = new ItemSet();
+			currItemSet.add(currItem.getItemID());
+			currItemSet.add(secondItem.getItemID());
+			c2.add(currItemSet);
+		    }
+		}
+	    }
+	}
+	
+	for(ItemSet itemSet : c2) {
+	    
+		System.out.println(itemSet.getItemsSet());
+	    
+	}
+	
+    }
+    
     public static void main(String[] args) throws IOException {
         readInput();       
         generateL();
         System.out.println("generating F1");
         generateF1();
+        System.out.println("prining c2");
+        generateLevel2Candidate(0.1);
 	TestSuites();
     }
     
