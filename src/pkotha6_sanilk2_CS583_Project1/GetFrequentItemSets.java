@@ -175,7 +175,7 @@ public class GetFrequentItemSets {
         return;
     }
 
-    public static void generateLevel2Candidate(double p) {
+    public static List<ItemSet> generateLevel2Candidate(double p) {
         List<ItemSet> c2 = new ArrayList<>();
         List<SingleItem> listL = new ArrayList<SingleItem>(singleItemSet);
 
@@ -200,6 +200,7 @@ public class GetFrequentItemSets {
         for(ItemSet itemSet : c2) {
             System.out.println(itemSet.getItemsSet());
         }
+        return c2;
     }
 
     public static void main(String[] args) throws IOException {
