@@ -2,16 +2,17 @@ package pkotha6_sanilk2_CS583_Project1;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class ItemSet {
-    private Set<Integer> itemsSet;
+    private TreeSet<Integer> itemsSet;
     private int count;
 
     public ItemSet() {
-        itemsSet = new HashSet<>();
+        itemsSet = new TreeSet<>();
     }
 
-    public Set<Integer> getItemsSet() {
+    public TreeSet<Integer> getItemsSet() {
         return itemsSet;
     }
 
