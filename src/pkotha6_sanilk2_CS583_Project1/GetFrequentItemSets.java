@@ -52,7 +52,6 @@ public class GetFrequentItemSets {
         Transactions.transactions = transactions;
         buildListofSingleItems(singleItemCount, noOfTransactions);
         br.close();
-
     }
 
     public static void buildListofSingleItems(Map<Integer, Integer> singleItemCount, double noOfTransactions) throws IOException {
@@ -129,11 +128,15 @@ public class GetFrequentItemSets {
     }
 
     public static void generateF1() {
+        if(singleItemSet == null) {
+            return;
+        }
         for(SingleItem item : singleItemSet) {
             if(item.getSupport() > item.getMIS()) {
                 F1.add(item);
             }
         }
+
         for(SingleItem item : F1) {
             System.out.println(item);
         }
@@ -173,16 +176,18 @@ public class GetFrequentItemSets {
     }
 
     public static void generateLevel2Candidate(double p) {
-        ArrayList<ItemSet> c2 = new ArrayList<>();
-        ArrayList<SingleItem> listL = new ArrayList<SingleItem>(singleItemSet);
-        for(int index =0 ; index < listL.size(); index++) {
+        List<ItemSet> c2 = new ArrayList<>();
+        List<SingleItem> listL = new ArrayList<SingleItem>(singleItemSet);
+
+        for(int index = 0; index < listL.size(); index++) {
             SingleItem currItem = listL.get(index);
+
             if(currItem.getSupport() >= currItem.getMIS()){
                 for(int h = index+1; h < listL.size(); h++) {
                     SingleItem secondItem = listL.get(h);
-                    if ( (secondItem.getSupport() >= secondItem.getMIS()) &&
-                            (Math.abs(currItem.getSupport() - secondItem.getSupport())<=p)
-                            ) {
+
+                    if ((secondItem.getSupport() >= secondItem.getMIS()) && 
+                            (Math.abs(currItem.getSupport() - secondItem.getSupport())<=p)) {
                         ItemSet currItemSet = new ItemSet();
                         currItemSet.add(currItem.getItemID());
                         currItemSet.add(secondItem.getItemID());
@@ -193,20 +198,17 @@ public class GetFrequentItemSets {
         }
 
         for(ItemSet itemSet : c2) {
-
             System.out.println(itemSet.getItemsSet());
-
         }
-
     }
 
     public static void main(String[] args) throws IOException {
         readInput();  
-        System.out.println("prininting L");
+        System.out.println("generating L");
         generateL();
         System.out.println("generating F1");
         generateF1();
-        System.out.println("prining c2");
+        System.out.println("printing c2");
         generateLevel2Candidate(0.1);
         System.out.println("Implementing Algorithm");
         AprioriAlgorithm();

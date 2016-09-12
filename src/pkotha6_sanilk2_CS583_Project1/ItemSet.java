@@ -26,4 +26,12 @@ public class ItemSet {
     public void add(int item) {
         itemsSet.add(item);
     }
+
+    @Override
+    public String toString() {
+        if(this.itemsSet == null) {
+            return "[]";
+        }
+        return this.itemsSet.toString();
+    }
 }
