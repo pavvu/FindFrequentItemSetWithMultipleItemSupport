@@ -339,10 +339,10 @@ public class GetFrequentItemSets {
     public static boolean containCannotHave (ItemSet currItemSet) {
         for (ItemSet currCannotBeTogetherItemSet : cannotBeTogetherItemSets) {
             if (currItemSet.getItemsSet().contains(currCannotBeTogetherItemSet)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public static void populateCannotHaveList () {
@@ -374,6 +374,7 @@ public class GetFrequentItemSets {
     public static void main(String[] args) throws IOException {
         readInput();  
         System.out.println("generating L");
+        populateCannotHaveList();
         initialPass();
         System.out.println("generating F1");
         generateF1();
