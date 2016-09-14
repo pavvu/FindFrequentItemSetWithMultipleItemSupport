@@ -193,7 +193,8 @@ public class GetFrequentItemSets {
 
             System.out.println("prining f" + (k-1));
             for (ItemSet i : Fk) {
-                System.out.println(i + " count " + i.getCount());
+        	if (!containCannotHave(i) && containMustHave(i))
+        	    System.out.println(i + " count " + i.getCount());
             }
 
             previousFk = Fk;
