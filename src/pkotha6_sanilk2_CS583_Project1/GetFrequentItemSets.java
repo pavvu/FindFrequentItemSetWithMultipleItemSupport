@@ -25,6 +25,7 @@ public class GetFrequentItemSets {
     public static Map<Integer, SingleItem> singleItemMap = new HashMap<>();
     public static List<Integer> mustHaveList = new ArrayList<>();
     public static List<Integer> cannotHaveList = new ArrayList<>();
+    public static List<ItemSet> cannotBeTogetherItemSets = new ArrayList<ItemSet>();
 
     public static void readInput() throws IOException {
         BufferedReader  br = new BufferedReader(new FileReader("input-data.txt"));
@@ -258,6 +259,7 @@ public class GetFrequentItemSets {
         }
         return Ck;
     }
+    
 
     public static boolean sPresentInK (List<Integer> c) {
         boolean present = true;
@@ -320,6 +322,52 @@ public class GetFrequentItemSets {
         }
 
         return null;
+    }
+    
+    public static boolean containMustHave (ItemSet currItemSet) {
+	
+	for (Integer item : mustHaveList) {
+	    if(currItemSet.getItemsSet().contains(item)) {
+		return true;
+	    }
+	}
+	
+	return false;
+    }
+    
+    public static boolean containCannotHave (ItemSet currItemSet) {
+	for (ItemSet currCannotBeTogetherItemSet : cannotBeTogetherItemSets) {
+	    if (currItemSet.getItemsSet().contains(currCannotBeTogetherItemSet)) {
+		return false;
+	    }
+	}
+	return true;
+    }
+    
+    public static void populateCannotHaveList () {
+	
+	if (cannotHaveList==null || cannotHaveList.size()==0 ) {
+	    System.out.println("ERROr!!! empty cannot have list");
+	    return ; 
+	}
+	
+	if (cannotHaveList.size()==1) {
+	    
+	    ItemSet tempItemSet = new ItemSet();
+	    tempItemSet.add(cannotHaveList.get(0));
+	    cannotBeTogetherItemSets.add(tempItemSet);
+	}
+	
+	for (int i=0; i < cannotHaveList.size(); i++) {
+	    Integer firstItem = cannotHaveList.get(i);
+	    for (int j= i+1; j < cannotHaveList.size(); j++ ) {
+		Integer secondItem = cannotHaveList.get(j);
+		ItemSet tempItemSet = new ItemSet();
+		tempItemSet.add(firstItem);
+		tempItemSet.add(secondItem);
+		cannotBeTogetherItemSets.add(tempItemSet);		
+	    }
+	}
     }
 
     public static void main(String[] args) throws IOException {
