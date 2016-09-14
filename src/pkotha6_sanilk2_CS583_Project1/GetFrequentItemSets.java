@@ -259,7 +259,7 @@ public class GetFrequentItemSets {
         }
         return Ck;
     }
-    
+
 
     public static boolean sPresentInK (List<Integer> c) {
         boolean present = true;
@@ -323,51 +323,51 @@ public class GetFrequentItemSets {
 
         return null;
     }
-    
+
     public static boolean containMustHave (ItemSet currItemSet) {
-	
-	for (Integer item : mustHaveList) {
-	    if(currItemSet.getItemsSet().contains(item)) {
-		return true;
-	    }
-	}
-	
-	return false;
+
+        for (Integer item : mustHaveList) {
+            if(currItemSet.getItemsSet().contains(item)) {
+                return true;
+            }
+        }
+
+        return false;
     }
-    
+
     public static boolean containCannotHave (ItemSet currItemSet) {
-	for (ItemSet currCannotBeTogetherItemSet : cannotBeTogetherItemSets) {
-	    if (currItemSet.getItemsSet().contains(currCannotBeTogetherItemSet)) {
-		return false;
-	    }
-	}
-	return true;
+        for (ItemSet currCannotBeTogetherItemSet : cannotBeTogetherItemSets) {
+            if (currItemSet.getItemsSet().contains(currCannotBeTogetherItemSet)) {
+                return false;
+            }
+        }
+        return true;
     }
-    
+
     public static void populateCannotHaveList () {
-	
-	if (cannotHaveList==null || cannotHaveList.size()==0 ) {
-	    System.out.println("ERROr!!! empty cannot have list");
-	    return ; 
-	}
-	
-	if (cannotHaveList.size()==1) {
-	    
-	    ItemSet tempItemSet = new ItemSet();
-	    tempItemSet.add(cannotHaveList.get(0));
-	    cannotBeTogetherItemSets.add(tempItemSet);
-	}
-	
-	for (int i=0; i < cannotHaveList.size(); i++) {
-	    Integer firstItem = cannotHaveList.get(i);
-	    for (int j= i+1; j < cannotHaveList.size(); j++ ) {
-		Integer secondItem = cannotHaveList.get(j);
-		ItemSet tempItemSet = new ItemSet();
-		tempItemSet.add(firstItem);
-		tempItemSet.add(secondItem);
-		cannotBeTogetherItemSets.add(tempItemSet);		
-	    }
-	}
+
+        if (cannotHaveList==null || cannotHaveList.size()==0 ) {
+            System.out.println("ERROr!!! empty cannot have list");
+            return ; 
+        }
+
+        if (cannotHaveList.size()==1) {
+            ItemSet tempItemSet = new ItemSet();
+            tempItemSet.add(cannotHaveList.get(0));
+            cannotBeTogetherItemSets.add(tempItemSet);
+            return;
+        }
+
+        for (int i=0; i < cannotHaveList.size(); i++) {
+            Integer firstItem = cannotHaveList.get(i);
+            for (int j= i+1; j < cannotHaveList.size(); j++ ) {
+                Integer secondItem = cannotHaveList.get(j);
+                ItemSet tempItemSet = new ItemSet();
+                tempItemSet.add(firstItem);
+                tempItemSet.add(secondItem);
+                cannotBeTogetherItemSets.add(tempItemSet);		
+            }
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -398,5 +398,10 @@ public class GetFrequentItemSets {
         //2 because it is present in first and last.
 
         System.out.println(combinef1f2(i, j, 0.1) == null);
+
+        populateCannotHaveList();
+        for(ItemSet s : cannotBeTogetherItemSets) {
+            System.out.println(s);
+        }
     }
 }
