@@ -21,327 +21,334 @@ public class GetFrequentItemSets {
     public static List<ItemSet> Fk = new LinkedList<>();
     public static List<ItemSet> previousFk = new LinkedList<>();
     public static double noOfTransactions = 0d;
+    public static double SDC = 0d;
     public static Map<Integer, SingleItem> singleItemMap = new HashMap<>();
+    public static List<Integer> mustHaveList = new ArrayList<>();
+    public static List<Integer> cannotHaveList = new ArrayList<>();
 
     public static void readInput() throws IOException {
-	BufferedReader  br = new BufferedReader(new FileReader("input-data.txt"));
-	String currentLine = "";
+        BufferedReader  br = new BufferedReader(new FileReader("input-data.txt"));
+        String currentLine = "";
 
-	// building transactions add singleItems
-	List<HashSet<Integer>> transactions = new ArrayList<HashSet<Integer>>();
-	Map<Integer, Integer> singleItemCount = new TreeMap<>();
-	while ((currentLine = br.readLine()) != null) {
-	    noOfTransactions++;
-	    System.out.println(currentLine);
-	    currentLine = currentLine.replace("{", "");
-	    currentLine = currentLine.replace("}", "");
-	    currentLine = currentLine.replace(",", "");
+        // building transactions add singleItems
+        List<HashSet<Integer>> transactions = new ArrayList<HashSet<Integer>>();
+        Map<Integer, Integer> singleItemCount = new TreeMap<>();
+        while ((currentLine = br.readLine()) != null) {
+            noOfTransactions++;
+            System.out.println(currentLine);
+            currentLine = currentLine.replace("{", "");
+            currentLine = currentLine.replace("}", "");
+            currentLine = currentLine.replace(",", "");
 
-	    HashSet<Integer> currTransaction = new HashSet<>();
-	    for (String itemID : currentLine.split(" ")) {
-		int item = Integer.parseInt(itemID);
-		if(singleItemCount.containsKey(item)) {
-		    singleItemCount.put(item, singleItemCount.get(item)+1);
-		}
-		else {
-		    singleItemCount.put(item, 1);
-		}
-		currTransaction.add(item);	    
-	    }
-	    transactions.add(currTransaction);
+            HashSet<Integer> currTransaction = new HashSet<>();
+            for (String itemID : currentLine.split(" ")) {
+                int item = Integer.parseInt(itemID);
+                if(singleItemCount.containsKey(item)) {
+                    singleItemCount.put(item, singleItemCount.get(item)+1);
+                }
+                else {
+                    singleItemCount.put(item, 1);
+                }
+                currTransaction.add(item);	    
+            }
+            transactions.add(currTransaction);
 
-	}
-	Transactions.transactions = transactions;
-	buildListofSingleItems(singleItemCount, noOfTransactions);
-	br.close();
+        }
+        Transactions.transactions = transactions;
+        buildListofSingleItems(singleItemCount, noOfTransactions);
+        br.close();
     }
 
     public static void buildListofSingleItems(Map<Integer, Integer> singleItemCount, double noOfTransactions) throws IOException {
-	Map<Integer, Double> itemMisMap = getMIS();
-	int count = 0;
-	SingleItem currSingleItem = null;
-	for(Integer itemId : singleItemCount.keySet()) {
-	    currSingleItem = new SingleItem();
-	    count = singleItemCount.get(itemId);
-	    currSingleItem.setCount(count);
-	    currSingleItem.setItemID(itemId);
-	    currSingleItem.setMIS(itemMisMap.get(itemId));
-	    currSingleItem.setSupport(count/noOfTransactions);
-	    M.add(currSingleItem);
-	    if(!singleItemMap.containsKey(itemId)) {
-		singleItemMap.put(itemId, currSingleItem);
-	    }
-	}
+        Map<Integer, Double> itemMisMap = getParameters();
+        int count = 0;
+        SingleItem currSingleItem = null;
+        for(Integer itemId : singleItemCount.keySet()) {
+            currSingleItem = new SingleItem();
+            count = singleItemCount.get(itemId);
+            currSingleItem.setCount(count);
+            currSingleItem.setItemID(itemId);
+            currSingleItem.setMIS(itemMisMap.get(itemId));
+            currSingleItem.setSupport(count/noOfTransactions);
+            M.add(currSingleItem);
+            if(!singleItemMap.containsKey(itemId)) {
+                singleItemMap.put(itemId, currSingleItem);
+            }
+        }
 
-	// printing the built datastructure
-	for(SingleItem s : M) {
-	    System.out.println(s);
-	}
+        // printing the built datastructure
+        for(SingleItem s : M) {
+            System.out.println(s);
+        }
     }
 
-    public static Map<Integer, Double> getMIS() throws IOException {
-	BufferedReader br = new BufferedReader(new FileReader("parameter-file.txt"));
-	String currLine = "";
-	int itemId = 0;
-	double itemMis = 0d;
-	Map<Integer, Double> itemMisMap = new HashMap<>();
-	while((currLine = br.readLine()) != null) {
-	    if(currLine.contains("MIS")) {
-		itemId = Integer.parseInt( currLine.substring(4, currLine.indexOf(')')));
-		itemMis = Double.parseDouble(currLine.substring(currLine.indexOf('=')+2));
-		itemMisMap.put(itemId, itemMis);	
-	    }
-	    else {
-		break;
-	    }
-	}
-	br.close();
-	return itemMisMap;
+    public static Map<Integer, Double> getParameters() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader("parameter-file.txt"));
+        String currLine = "";
+        int tempInt = 0;
+        double temp = 0d;
+        String tempStr = "";
+        String tempParts[];
+        Map<Integer, Double> itemMisMap = new HashMap<>();
+        while((currLine = br.readLine()) != null) {
+            if(currLine.contains("MIS")) {
+                tempInt = Integer.parseInt( currLine.substring(4, currLine.indexOf(')')));
+                temp = Double.parseDouble(currLine.substring(currLine.indexOf('=') + 2));
+                itemMisMap.put(tempInt, temp);	
+            }
+            else if(currLine.contains("SDC")){
+                SDC = Double.parseDouble(currLine.substring(currLine.indexOf("=") + 2));
+            }
+            else if(currLine.contains("cannot")) {
+                tempStr = currLine.substring(currLine.indexOf(":") + 2);
+                tempStr = tempStr.replaceAll("\\{", "").replaceAll("\\}", "").trim();
+                tempParts = tempStr.split(",");
+                for(String s : tempParts) {
+                    cannotHaveList.add(Integer.parseInt(s.trim()));
+                }
+            }
+            else if(currLine.contains("must")) {
+                tempStr = currLine.substring(currLine.indexOf(":") + 2);
+                tempParts = tempStr.split("or");
+                for(String s : tempParts) {
+                    mustHaveList.add(Integer.parseInt(s.trim()));
+                }
+            }
+            else {
+                break;
+            }
+        }
+        br.close();
+        return itemMisMap;
     }
 
 
     public static void initialPass() {
-	if(M == null) {
-	    return;
-	}
+        if(M == null) {
+            return;
+        }
 
-	SingleItem firstItem = null;
-	SingleItem curItem = null; 
-	for(Iterator<SingleItem> i = M.iterator(); i.hasNext();) {
-	    curItem = i.next();
-	    if(firstItem == null) {
-		if(curItem.getSupport() >= curItem.getMIS()) {
-		    firstItem = curItem;
-		    L.add(curItem);
-		}
-		else {
-		    M.remove(curItem);
-		}
-	    }
-	    else {
-		if(curItem.getSupport() >= firstItem.getMIS()) {
-		    L.add(curItem);
-		}
-	    }
-	}
+        SingleItem firstItem = null;
+        SingleItem curItem = null; 
+        for(Iterator<SingleItem> i = M.iterator(); i.hasNext();) {
+            curItem = i.next();
+            if(firstItem == null) {
+                if(curItem.getSupport() >= curItem.getMIS()) {
+                    firstItem = curItem;
+                    L.add(curItem);
+                }
+                else {
+                    M.remove(curItem);
+                }
+            }
+            else {
+                if(curItem.getSupport() >= firstItem.getMIS()) {
+                    L.add(curItem);
+                }
+            }
+        }
 
-	for (SingleItem item : L) {
-	    System.out.println(item);
-	}
+        for (SingleItem item : L) {
+            System.out.println(item);
+        }
     }
 
     public static void generateF1() {
-	if(M == null) {
-	    return;
-	}
-	for(SingleItem item : M) {
-	    if(item.getSupport() > item.getMIS()) {
-		F1.add(item);
-	    }
-	}
+        if(M == null) {
+            return;
+        }
+        for(SingleItem item : M) {
+            if(item.getSupport() > item.getMIS()) {
+                F1.add(item);
+            }
+        }
 
-	for(SingleItem item : F1) {
-	    System.out.println(item);
-	}
+        for(SingleItem item : F1) {
+            System.out.println(item);
+        }
     }
 
     public static void AprioriAlgorithm() {
-	int k = 2;
-	List<ItemSet> Ck = new ArrayList<>();
-	while(k == 2 || (previousFk != null && previousFk.size() > 0)) {
-	    if(k == 2) {
-		Ck = generateLevel2Candidate(0.1);
-	    }
-	    else {
-		Ck = generateMSCandidate(0.1);
-	    }
+        int k = 2;
+        List<ItemSet> Ck = new ArrayList<>();
+        while(k == 2 || (previousFk != null && previousFk.size() > 0)) {
+            if(k == 2) {
+                Ck = generateLevel2Candidate(SDC);
+            }
+            else {
+                Ck = generateMSCandidate(SDC);
+            }
 
-	    Fk = new LinkedList<>();
-	    for(ItemSet i : Ck) {
-		i.setCount(Transactions.getItemSetCount(i));
+            Fk = new LinkedList<>();
+            for(ItemSet i : Ck) {
+                i.setCount(Transactions.getItemSetCount(i));
 
-		List<Integer> curItemList = new ArrayList<>(i.getItemsSet());
-		if(i.getCount()/noOfTransactions >= singleItemMap.get(curItemList.get(0)).getMIS()) {
-		    Fk.add(i);
-		}
-	    }
-	    k++;
+                List<Integer> curItemList = new ArrayList<>(i.getItemsSet());
+                if(i.getCount()/noOfTransactions >= singleItemMap.get(curItemList.get(0)).getMIS()) {
+                    Fk.add(i);
+                }
+            }
+            k++;
 
-	    System.out.println("prining f" + (k-1));
-	    for (ItemSet i : Fk) {
-		System.out.println(i + " count " + i.getCount());
-	    }
+            System.out.println("prining f" + (k-1));
+            for (ItemSet i : Fk) {
+                System.out.println(i + " count " + i.getCount());
+            }
 
-	    previousFk = Fk;
-	}
-	//Union;
-	return;
+            previousFk = Fk;
+        }
+        //Union;
+        return;
     }
 
     public static List<ItemSet> generateLevel2Candidate(double p) {
-	List<ItemSet> c2 = new ArrayList<>();
-	List<SingleItem> listL = new ArrayList<SingleItem>(L);
-	SingleItem firstItem = null;
-	for(int index = 0; index < listL.size(); index++) {
-	    SingleItem currItem = listL.get(index);
+        List<ItemSet> c2 = new ArrayList<>();
+        List<SingleItem> listL = new ArrayList<SingleItem>(L);
+        SingleItem firstItem = null;
+        for(int index = 0; index < listL.size(); index++) {
+            SingleItem currItem = listL.get(index);
 
-	    if(currItem.getSupport() >= currItem.getMIS()){
-		firstItem = currItem;
-		for(int h = index+1; h < listL.size(); h++) {
-		    SingleItem secondItem = listL.get(h);
+            if(currItem.getSupport() >= currItem.getMIS()){
+                firstItem = currItem;
+                for(int h = index+1; h < listL.size(); h++) {
+                    SingleItem secondItem = listL.get(h);
 
-		    if ((secondItem.getSupport() >= firstItem.getMIS()) && 
-			    (Math.abs(currItem.getSupport() - secondItem.getSupport())<=p)) {
-			ItemSet currItemSet = new ItemSet();
-			currItemSet.add(currItem.getItemID());
-			currItemSet.add(secondItem.getItemID());
-			c2.add(currItemSet);
-		    }
-		}
-	    }
-	}
+                    if ((secondItem.getSupport() >= firstItem.getMIS()) && 
+                            (Math.abs(currItem.getSupport() - secondItem.getSupport())<=p)) {
+                        ItemSet currItemSet = new ItemSet();
+                        currItemSet.add(currItem.getItemID());
+                        currItemSet.add(secondItem.getItemID());
+                        c2.add(currItemSet);
+                    }
+                }
+            }
+        }
 
-	System.out.println("printing c2");
-	for(ItemSet itemSet : c2) {
-	    System.out.println(itemSet.getItemsSet());
-	}
-	return c2;
+        System.out.println("printing c2");
+        for(ItemSet itemSet : c2) {
+            System.out.println(itemSet.getItemsSet());
+        }
+        return c2;
     }
 
-    public static List<ItemSet> generateMSCandidate(double SDC) {
+    public static List<ItemSet> generateMSCandidate(double p) {
 
-	List<ItemSet> Ck = new ArrayList<>();
-	ItemSet currC;
-	int bound = Fk.size();
-	boolean addCandidateToCk = true;
-	for(int i =0; i<bound-1; i++) {
-	    for (int j=i+1; j<bound ; j++ ) {
-		List<Integer> c = combinef1f2(Fk.get(i), Fk.get(j), SDC);
-		if(c != null) {
-		    // checking if the k-1 size subsets are present in Fk-1 or not
-		    addCandidateToCk = sPresentInK(c);
-		    if(addCandidateToCk) {
-			currC = new ItemSet();
-			for(int cItem : c) {
-			    currC.add(cItem);
-			}
-			Ck.add(currC);
-		    }
-		}
-		else {
-		    break;
-		}
-	    }
-	}
-	return Ck;
+        List<ItemSet> Ck = new ArrayList<>();
+        ItemSet currC;
+        int bound = Fk.size();
+        boolean addCandidateToCk = true;
+        for(int i =0; i<bound-1; i++) {
+            for (int j=i+1; j<bound ; j++ ) {
+                List<Integer> c = combinef1f2(Fk.get(i), Fk.get(j), p);
+                if(c != null) {
+                    // checking if the k-1 size subsets are present in Fk-1 or not
+                    addCandidateToCk = sPresentInK(c);
+                    if(addCandidateToCk) {
+                        currC = new ItemSet();
+                        for(int cItem : c) {
+                            currC.add(cItem);
+                        }
+                        Ck.add(currC);
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        return Ck;
     }
 
     public static boolean sPresentInK (List<Integer> c) {
-	boolean present = true;
-	boolean MIScondition = MISCheck(c);
-	for (int index=0; index < c.size(); index++) {
-	    List<Integer> currSubSet = c;
-	    currSubSet.remove(index);
-	    if(currSubSet.contains(c.get(0)) || MIScondition) {
-		ItemSet currSubSetItemSet = new ItemSet();
-		for(int currSubSetItem : currSubSet) {
-		    currSubSetItemSet.add(currSubSetItem);
-		}
-		if(!Fk.contains(currSubSetItemSet)) {
-		    present = false;
-		    break;
-		}
-	    }
-	    else {
-		break;
-	    }
-	}
-	return present;
+        boolean present = true;
+        boolean MIScondition = MISCheck(c);
+        for (int index=0; index < c.size(); index++) {
+            List<Integer> currSubSet = new ArrayList<>(c);
+            currSubSet.remove(index);
+            if(currSubSet.contains(c.get(0)) || MIScondition) {
+                ItemSet currSubSetItemSet = new ItemSet();
+                for(int currSubSetItem : currSubSet) {
+                    currSubSetItemSet.add(currSubSetItem);
+                }
+                if(!Fk.contains(currSubSetItemSet)) {
+                    present = false;
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+        }
+        return present;
     }
 
     public static boolean MISCheck(List<Integer> c) {
-	if(c == null || c.size() < 2) {
-	    return false;
-	}
+        if(c == null || c.size() < 2) {
+            return false;
+        }
 
-	return singleItemMap.get(c.get(0)).getMIS() == singleItemMap.get(c.get(1)).getMIS();
+        return singleItemMap.get(c.get(0)).getMIS() == singleItemMap.get(c.get(1)).getMIS();
     }
 
 
     public static List<Integer> combinef1f2(ItemSet f1, ItemSet f2, double SDC) {
-	// sanity check
-	if (f1==null || f2 ==null) return null;
-	if(f1.getItemsSet().size()!=f2.getItemsSet().size()) return null;
+        // sanity check
+        if (f1==null || f2 ==null) return null;
+        if(f1.getItemsSet().size()!=f2.getItemsSet().size()) return null;
 
-	int bound = f1.getItemsSet().size();
+        int bound = f1.getItemsSet().size();
 
-	List<Integer> f1List = new ArrayList<Integer> (f1.getItemsSet());
-	List<Integer> f2List = new ArrayList<Integer> (f2.getItemsSet());
+        List<Integer> f1List = new ArrayList<Integer> (f1.getItemsSet());
+        List<Integer> f2List = new ArrayList<Integer> (f2.getItemsSet());
 
-	int f1Last = f1List.remove(bound-1);
-	int f2Last = f2List.remove(bound-1);
+        int f1Last = f1List.remove(bound-1);
+        int f2Last = f2List.remove(bound-1);
 
-	SingleItem f1LastItem = singleItemMap.get(f1Last);
-	SingleItem f2LastItem = singleItemMap.get(f2Last);
+        SingleItem f1LastItem = singleItemMap.get(f1Last);
+        SingleItem f2LastItem = singleItemMap.get(f2Last);
 
-	double f1LastSup = f1LastItem.getSupport();
-	double f2LastSup = f2LastItem.getSupport();
+        double f1LastSup = f1LastItem.getSupport();
+        double f2LastSup = f2LastItem.getSupport();
 
-	double f1LastMIS = f1LastItem.getMIS();
-	double f2LastMIS = f2LastItem.getMIS();
+        double f1LastMIS = f1LastItem.getMIS();
+        double f2LastMIS = f2LastItem.getMIS();
 
-	if  (f1List.equals(f2List) /*&& f2LastMIS > f1LastMIS*/ && Math.abs(f1LastSup - f2LastSup)<=SDC) {
-	    f1List.add(f1Last);
-	    f1List.add(f2Last);
-	    return f1List;
-	}
+        if  (f1List.equals(f2List) /*&& f2LastMIS > f1LastMIS*/ && Math.abs(f1LastSup - f2LastSup)<=SDC) {
+            f1List.add(f1Last);
+            f1List.add(f2Last);
+            return f1List;
+        }
 
-	return null;
-
-	/*for (int i=0; i< bound-1; i++) {
-	   if(f1List.get(i) != f2List.get(i)) {
-	       return false;
-	   }
-	}
-
-	return true;*/
-
+        return null;
     }
 
     public static void main(String[] args) throws IOException {
-	readInput();  
-	System.out.println("generating L");
-	initialPass();
-	System.out.println("generating F1");
-	generateF1();
-	//System.out.println("printing c2");
-	//generateLevel2Candidate(0.1);
-	System.out.println("Implementing Algorithm");
-	AprioriAlgorithm();
-
-	//System.out.println("Printing Fk's");
-	for(ItemSet f : Fk) {
-	    System.out.println(f.getItemsSet());
-	}
-	TestSuites();
+        readInput();  
+        System.out.println("generating L");
+        initialPass();
+        System.out.println("generating F1");
+        generateF1();
+        System.out.println("Implementing Algorithm");
+        AprioriAlgorithm();
+        TestSuites();
     }
 
     public static void TestSuites() throws IOException {
-	ItemSet i = new ItemSet();
-	i.add(20);
-	i.add(30);
-	i.add(50);
-	System.out.println(Transactions.getItemSetCount(i) == 2);
-	//0 because it is not present.
+        ItemSet i = new ItemSet();
+        i.add(20);
+        i.add(30);
+        i.add(50);
+        System.out.println(Transactions.getItemSetCount(i) == 2);
+        //0 because it is not present.
 
-	ItemSet j = new ItemSet();
-	j.add(20);
-	j.add(30);
-	j.add(80);
+        ItemSet j = new ItemSet();
+        j.add(20);
+        j.add(30);
+        j.add(80);
 
-	System.out.println(Transactions.getItemSetCount(j) == 3);
-	//2 because it is present in first and last.
+        System.out.println(Transactions.getItemSetCount(j) == 3);
+        //2 because it is present in first and last.
 
-	System.out.println(combinef1f2(i, j, 0.1) == null);
+        System.out.println(combinef1f2(i, j, 0.1) == null);
     }
 }
