@@ -16,7 +16,7 @@ import java.util.TreeSet;
 
 public class GetFrequentItemSets {
     public static Set<SingleItem> M = new TreeSet<>(new MISComparator());
-    public static Set<SingleItem> F1 = new TreeSet<>(new IDComparator());
+    public static Set<SingleItem> F1 = new TreeSet<>(new MISComparator());
     public static Set<SingleItem> L = new TreeSet<>(new MISComparator());
     public static List<ItemSet> Fk = new LinkedList<>();
     public static List<ItemSet> previousFk = new LinkedList<>();

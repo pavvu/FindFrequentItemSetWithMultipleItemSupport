@@ -1,18 +1,19 @@
 package pkotha6_sanilk2_CS583_Project1;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class ItemSet {
-    private TreeSet<Integer> itemsSet;
+    private LinkedHashSet<Integer> itemsSet;
     private int count;
 
     public ItemSet() {
-        itemsSet = new TreeSet<>();
+        itemsSet = new LinkedHashSet<>();
     }
 
-    public TreeSet<Integer> getItemsSet() {
+    public LinkedHashSet<Integer> getItemsSet() {
         return itemsSet;
     }
 
