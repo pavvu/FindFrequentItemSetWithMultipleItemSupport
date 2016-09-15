@@ -220,7 +220,6 @@ public class GetFrequentItemSets {
                 System.out.println("\nFrequent " + (k-1) + "-itemsets\n");
                 System.out.println(sb.toString());
                 System.out.println("Total number of frequent " +(k-1) + "-itemsets = " + count);
-
             }
             previousFk = Fk;
         }
