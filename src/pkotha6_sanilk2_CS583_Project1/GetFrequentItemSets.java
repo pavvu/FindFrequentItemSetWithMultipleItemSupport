@@ -26,17 +26,19 @@ public class GetFrequentItemSets {
     public static List<Integer> mustHaveList = new ArrayList<>();
     public static List<Integer> cannotHaveList = new ArrayList<>();
     public static List<ItemSet> cannotBeTogetherItemSets = new ArrayList<ItemSet>();
+    public static boolean endOfCompare = false;
+    //End of initialisations
 
     public static void readInput() throws IOException {
         BufferedReader  br = new BufferedReader(new FileReader("input-data.txt"));
         String currentLine = "";
 
-        // building transactions add singleItems
+        // building transactions and singleItems
         List<HashSet<Integer>> transactions = new ArrayList<HashSet<Integer>>();
         Map<Integer, Integer> singleItemCount = new TreeMap<>();
         while ((currentLine = br.readLine()) != null) {
             noOfTransactions++;
-            System.out.println(currentLine);
+            //System.out.println(currentLine);
             currentLine = currentLine.replace("{", "");
             currentLine = currentLine.replace("}", "");
             currentLine = currentLine.replace(",", "");
@@ -77,10 +79,10 @@ public class GetFrequentItemSets {
             }
         }
 
-        // printing the built datastructure
-        for(SingleItem s : M) {
+        // printing the built data structure
+        /*for(SingleItem s : M) {
             System.out.println(s);
-        }
+        }*/
     }
 
     public static Map<Integer, Double> getParameters() throws IOException {
@@ -102,15 +104,15 @@ public class GetFrequentItemSets {
             }
             else if(currLine.contains("cannot")) {
                 tempStr = currLine.substring(currLine.indexOf(":") + 2);
-                tempStr = tempStr.replaceAll("\\{", "").replaceAll("\\}", "").trim();
-                tempParts = tempStr.split(",");
+                tempStr = tempStr.replaceAll("[^0-9]", " ").trim();
+                tempParts = tempStr.split("\\s+");
                 for(String s : tempParts) {
                     cannotHaveList.add(Integer.parseInt(s.trim()));
                 }
             }
             else if(currLine.contains("must")) {
                 tempStr = currLine.substring(currLine.indexOf(":") + 2);
-                tempParts = tempStr.split("or");
+                tempParts = tempStr.replaceAll("[^0-9]", " ").split("\\s+");
                 for(String s : tempParts) {
                     mustHaveList.add(Integer.parseInt(s.trim()));
                 }
@@ -149,9 +151,9 @@ public class GetFrequentItemSets {
             }
         }
 
-        for (SingleItem item : L) {
+        /*for (SingleItem item : L) {
             System.out.println(item);
-        }
+        }*/
     }
 
     public static void generateF1() {
@@ -164,8 +166,14 @@ public class GetFrequentItemSets {
             }
         }
 
-        for(SingleItem item : F1) {
-            System.out.println(item);
+        if(F1 != null && F1.size() > 0) {
+            int count = 0;
+            System.out.println("Frequent 1-itemsets\n");
+            for(SingleItem item : F1) {
+                count++;
+                System.out.println("\t" + item.getCount() + " : {" + item.getItemID() + "}");
+            }
+            System.out.println("Total number of frequent 1-itemsets = " + count);
         }
     }
 
@@ -191,15 +199,13 @@ public class GetFrequentItemSets {
             }
             k++;
 
-            System.out.println("prining f" + (k-1));
+            System.out.println("printing f" + (k-1));
             for (ItemSet i : Fk) {
-        	if (!containCannotHave(i) && containMustHave(i))
-        	    System.out.println(i + " count " + i.getCount());
+                if (!containCannotHave(i) && containMustHave(i))
+                    System.out.println(i + " count " + i.getCount());
             }
-
             previousFk = Fk;
         }
-        //Union;
         return;
     }
 
@@ -226,23 +232,23 @@ public class GetFrequentItemSets {
             }
         }
 
-        System.out.println("printing c2");
+        /*System.out.println("printing c2");
         for(ItemSet itemSet : c2) {
             System.out.println(itemSet.getItemsSet());
-        }
+        }*/
         return c2;
     }
 
     public static List<ItemSet> generateMSCandidate(double p) {
-
         List<ItemSet> Ck = new ArrayList<>();
         ItemSet currC;
         int bound = Fk.size();
         boolean addCandidateToCk = true;
         for(int i =0; i<bound-1; i++) {
+            endOfCompare = false;
             for (int j=i+1; j<bound ; j++ ) {
                 List<Integer> c = combinef1f2(Fk.get(i), Fk.get(j), p);
-                if(c != null) {
+                if(c!= null) {
                     // checking if the k-1 size subsets are present in Fk-1 or not
                     addCandidateToCk = sPresentInK(c);
                     if(addCandidateToCk) {
@@ -253,7 +259,7 @@ public class GetFrequentItemSets {
                         Ck.add(currC);
                     }
                 }
-                else {
+                if(endOfCompare) {
                     break;
                 }
             }
@@ -289,23 +295,26 @@ public class GetFrequentItemSets {
         if(c == null || c.size() < 2) {
             return false;
         }
-
         return singleItemMap.get(c.get(0)).getMIS() == singleItemMap.get(c.get(1)).getMIS();
     }
 
 
     public static List<Integer> combinef1f2(ItemSet f1, ItemSet f2, double SDC) {
-        // sanity check
-        if (f1==null || f2 ==null) return null;
-        if(f1.getItemsSet().size()!=f2.getItemsSet().size()) return null;
+        if (f1 == null || f2 == null) return null;
+        if(f1.getItemsSet().size() != f2.getItemsSet().size()) return null;
 
         int bound = f1.getItemsSet().size();
 
-        List<Integer> f1List = new ArrayList<Integer> (f1.getItemsSet());
-        List<Integer> f2List = new ArrayList<Integer> (f2.getItemsSet());
+        List<Integer> f1List = new LinkedList<Integer> (f1.getItemsSet());
+        List<Integer> f2List = new LinkedList<Integer> (f2.getItemsSet());
 
         int f1Last = f1List.remove(bound-1);
         int f2Last = f2List.remove(bound-1);
+
+        if(!f1List.equals(f2List)) {
+            endOfCompare = true;
+            return null;
+        }
 
         SingleItem f1LastItem = singleItemMap.get(f1Last);
         SingleItem f2LastItem = singleItemMap.get(f2Last);
@@ -316,7 +325,7 @@ public class GetFrequentItemSets {
         double f1LastMIS = f1LastItem.getMIS();
         double f2LastMIS = f2LastItem.getMIS();
 
-        if  (f1List.equals(f2List) /*&& f2LastMIS > f1LastMIS*/ && Math.abs(f1LastSup - f2LastSup)<=SDC) {
+        if(f2LastMIS >= f1LastMIS && Math.abs(f1LastSup - f2LastSup) <= SDC) {
             f1List.add(f1Last);
             f1List.add(f2Last);
             return f1List;
@@ -325,20 +334,24 @@ public class GetFrequentItemSets {
         return null;
     }
 
-    public static boolean containMustHave (ItemSet currItemSet) {
-
+    public static boolean containMustHave(ItemSet currItemSet) {
+        if(currItemSet == null || currItemSet.getItemsSet().size() == 0) {
+            return false;
+        }
         for (Integer item : mustHaveList) {
             if(currItemSet.getItemsSet().contains(item)) {
                 return true;
             }
         }
-
         return false;
     }
 
-    public static boolean containCannotHave (ItemSet currItemSet) {
+    public static boolean containCannotHave(ItemSet currItemSet) {
+        if(currItemSet == null || currItemSet.getItemsSet().size() == 0) {
+            return false;
+        }
         for (ItemSet currCannotBeTogetherItemSet : cannotBeTogetherItemSets) {
-            if (currItemSet.getItemsSet().contains(currCannotBeTogetherItemSet)) {
+            if (currItemSet.getItemsSet().containsAll(currCannotBeTogetherItemSet.getItemsSet())) {
                 return true;
             }
         }
@@ -346,9 +359,8 @@ public class GetFrequentItemSets {
     }
 
     public static void populateCannotHaveList () {
-
         if (cannotHaveList==null || cannotHaveList.size()==0 ) {
-            System.out.println("ERROr!!! empty cannot have list");
+            System.out.println("ERROR! cannot-have-together-list is empty");
             return ; 
         }
 
@@ -373,12 +385,12 @@ public class GetFrequentItemSets {
 
     public static void main(String[] args) throws IOException {
         readInput();  
-        System.out.println("generating L");
+        //System.out.println("generating L");
         populateCannotHaveList();
         initialPass();
-        System.out.println("generating F1");
+        //System.out.println("generating F1");
         generateF1();
-        System.out.println("Implementing Algorithm");
+        //System.out.println("Implementing Algorithm");
         AprioriAlgorithm();
         TestSuites();
     }
@@ -388,7 +400,7 @@ public class GetFrequentItemSets {
         i.add(20);
         i.add(30);
         i.add(50);
-        System.out.println(Transactions.getItemSetCount(i) == 2);
+        //System.out.println(Transactions.getItemSetCount(i) == 2);
         //0 because it is not present.
 
         ItemSet j = new ItemSet();
@@ -396,14 +408,24 @@ public class GetFrequentItemSets {
         j.add(30);
         j.add(80);
 
-        System.out.println(Transactions.getItemSetCount(j) == 3);
+        //System.out.println(Transactions.getItemSetCount(j) == 3);
         //2 because it is present in first and last.
 
-        System.out.println(combinef1f2(i, j, 0.1) == null);
+        //System.out.println(combinef1f2(i, j, 0.1) == null);
 
-        populateCannotHaveList();
+        //System.out.println("combining items test case");
+        i = new ItemSet();
+        i.add(100);
+        i.add(50);
+
+        j = new ItemSet();
+        j.add(140);
+        j.add(50);
+        combinef1f2(i,j,0.2);
+
+        /*        populateCannotHaveList();
         for(ItemSet s : cannotBeTogetherItemSets) {
             System.out.println(s);
-        }
+        }*/
     }
 }
