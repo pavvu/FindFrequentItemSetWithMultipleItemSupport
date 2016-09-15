@@ -141,7 +141,7 @@ public class GetFrequentItemSets {
                     L.add(curItem);
                 }
                 else {
-                    M.remove(curItem);
+                    //M.remove(curItem);
                 }
             }
             else {
