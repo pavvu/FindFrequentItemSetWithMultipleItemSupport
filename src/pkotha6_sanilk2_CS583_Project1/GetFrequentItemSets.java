@@ -170,8 +170,11 @@ public class GetFrequentItemSets {
             int count = 0;
             System.out.println("Frequent 1-itemsets\n");
             for(SingleItem item : F1) {
-                count++;
-                System.out.println("\t" + item.getCount() + " : {" + item.getItemID() + "}");
+        	if (mustHaveList.contains(item.getItemID())) {
+        	    count++;
+                    System.out.println("\t" + item.getCount() + " : {" + item.getItemID() + "}");
+        	}
+               
             }
             System.out.println("Total number of frequent 1-itemsets = " + count);
         }
