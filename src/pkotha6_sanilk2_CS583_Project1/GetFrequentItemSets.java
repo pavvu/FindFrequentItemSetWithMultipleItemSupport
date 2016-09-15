@@ -200,11 +200,20 @@ public class GetFrequentItemSets {
             k++;
 
             int count = 0;
+            List<Integer> currItemsList = new LinkedList<>();
             StringBuilder sb = new StringBuilder();
+            ItemSet currTailItemSet;
             for (ItemSet i : Fk) {
                 if (!containCannotHave(i) && containMustHave(i)) {
+                    currItemsList = new LinkedList<>(i.getItemsSet());
+                    currItemsList.remove(0);
+                    currTailItemSet = new ItemSet();
                     count++;
                     sb.append("\t" + i.getCount() + " : {" + i + "}\n");
+                    for(int item : currItemsList) {
+                        currTailItemSet.add(item);
+                    }
+                    sb.append("Tailcount = " + Transactions.getItemSetCount(currTailItemSet) + "\n");
                 }
             }
             if(count > 0) {

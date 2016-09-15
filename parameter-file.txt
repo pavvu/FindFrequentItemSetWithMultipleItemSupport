@@ -10,6 +10,6 @@ MIS(90) = 0.20
 MIS(100) = 0.10
 MIS(120) = 0.20
 MIS(140) = 0.15
-SDC = 0.6
-cannot_be_together: {20, 40, 50}
-must-have: 20 or 40 or 50
+SDC = 0.85
+cannot_be_together: {20, 40, 50, 100, 140}
+must-have: 20
