@@ -1,9 +1,6 @@
 package pkotha6_sanilk2_CS583_Project1;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class ItemSet {
     private LinkedHashSet<Integer> itemsSet;
@@ -36,4 +33,13 @@ public class ItemSet {
         }
         return this.itemsSet.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof ItemSet) {
+            return this.getItemsSet().containsAll(((ItemSet) o).getItemsSet());
+        }
+        return false;
+    }
+
 }

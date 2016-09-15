@@ -103,18 +103,54 @@ public class GetFrequentItemSets {
                 SDC = Double.parseDouble(currLine.substring(currLine.indexOf("=") + 2));
             }
             else if(currLine.contains("cannot")) {
-                tempStr = currLine.substring(currLine.indexOf(":") + 2);
-                tempStr = tempStr.replaceAll("[^0-9]", " ").trim();
-                tempParts = tempStr.split("\\s+");
-                for(String s : tempParts) {
-                    cannotHaveList.add(Integer.parseInt(s.trim()));
+                int index = currLine.indexOf(":") + 2;
+                if(index < currLine.length()) {
+                    tempStr = currLine.substring(currLine.indexOf(":") + 2);
+                    tempStr = tempStr.replaceAll("[^0-9]", " ").trim();
+                    tempParts = tempStr.split("\\s+");
+                    int length = 0;
+                    boolean numberCheck = false;
+                    boolean nullCheck = false;
+                    for(String s : tempParts) {
+                        numberCheck = true;
+                        nullCheck = true;
+                        length = s.length();
+                        for(int i = 0; i < length; ++i) {
+                            nullCheck = false;
+                            if(!Character.isDigit((s.charAt(i)))) {
+                                numberCheck = false;
+                                break;
+                            }
+                        }
+                        if(numberCheck && !nullCheck) {
+                            cannotHaveList.add(Integer.parseInt(s.trim()));
+                        }
+                    }
                 }
             }
             else if(currLine.contains("must")) {
-                tempStr = currLine.substring(currLine.indexOf(":") + 2);
-                tempParts = tempStr.replaceAll("[^0-9]", " ").split("\\s+");
-                for(String s : tempParts) {
-                    mustHaveList.add(Integer.parseInt(s.trim()));
+                int index = currLine.indexOf(":") + 2;
+                if(index < currLine.length()) {
+                    tempStr = currLine.substring(currLine.indexOf(":") + 2);
+                    tempParts = tempStr.replaceAll("[^0-9]", " ").split("\\s+");
+                    int length = 0;
+                    boolean numberCheck = false;
+                    boolean nullCheck = false;
+                    for(String s : tempParts) {
+                        numberCheck = true;
+                        nullCheck = true;
+                        length = s.length();
+                        for(int i = 0; i < length; ++i) {
+                            nullCheck = false;
+                            if(!Character.isDigit((s.charAt(i)))) {
+                                numberCheck = false;
+                                break;
+                            }
+                        }
+                        if(numberCheck && !nullCheck) {
+                            mustHaveList.add(Integer.parseInt(s.trim()));
+                        }
+                    }
                 }
             }
             else {
@@ -355,6 +391,9 @@ public class GetFrequentItemSets {
     }
 
     public static boolean containMustHave(ItemSet currItemSet) {
+        if(mustHaveList == null || mustHaveList.size() == 0) {
+            return true;
+        }
         if(currItemSet == null || currItemSet.getItemsSet().size() == 0) {
             return false;
         }
@@ -367,6 +406,9 @@ public class GetFrequentItemSets {
     }
 
     public static boolean containCannotHave(ItemSet currItemSet) {
+        if(cannotHaveList == null || cannotHaveList.size() == 0) {
+            return false;
+        }
         if(currItemSet == null || currItemSet.getItemsSet().size() == 0) {
             return false;
         }
@@ -379,21 +421,18 @@ public class GetFrequentItemSets {
     }
 
     public static void populateCannotHaveList () {
-        if (cannotHaveList==null || cannotHaveList.size()==0 ) {
+        if (cannotHaveList == null || cannotHaveList.size() == 0 ) {
             System.out.println("ERROR! cannot-have-together-list is empty");
             return ; 
         }
 
-        if (cannotHaveList.size()==1) {
-            ItemSet tempItemSet = new ItemSet();
-            tempItemSet.add(cannotHaveList.get(0));
-            cannotBeTogetherItemSets.add(tempItemSet);
+        if (cannotHaveList.size() == 1) {
             return;
         }
 
-        for (int i=0; i < cannotHaveList.size(); i++) {
+        for (int i = 0; i < cannotHaveList.size(); i++) {
             Integer firstItem = cannotHaveList.get(i);
-            for (int j= i+1; j < cannotHaveList.size(); j++ ) {
+            for (int j = i+1; j < cannotHaveList.size(); j++) {
                 Integer secondItem = cannotHaveList.get(j);
                 ItemSet tempItemSet = new ItemSet();
                 tempItemSet.add(firstItem);
