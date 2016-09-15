@@ -199,15 +199,20 @@ public class GetFrequentItemSets {
             }
             k++;
 
-            System.out.println("\nFrequent " + (k-1) + "-itemsets\n");
             int count = 0;
+            StringBuilder sb = new StringBuilder();
             for (ItemSet i : Fk) {
                 if (!containCannotHave(i) && containMustHave(i)) {
                     count++;
-                    System.out.println("\t" + i.getCount() + " : {" + i + "}");
+                    sb.append("\t" + i.getCount() + " : {" + i + "}\n");
                 }
             }
-            System.out.println("Total number of frequent 1-itemsets = " + count);
+            if(count > 0) {
+                System.out.println("\nFrequent " + (k-1) + "-itemsets\n");
+                System.out.println(sb.toString());
+                System.out.println("Total number of frequent 1-itemsets = " + count);
+
+            }
             previousFk = Fk;
         }
         return;
