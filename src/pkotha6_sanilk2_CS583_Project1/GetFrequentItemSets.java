@@ -256,6 +256,8 @@ public class GetFrequentItemSets {
             List<Integer> currItemsList = new LinkedList<>();
             StringBuilder sb = new StringBuilder();
             ItemSet currTailItemSet;
+            //Updated condition during DEMO!
+            //if((k-1) % 2 != 0) {
             for (ItemSet i : Fk) {
                 if (!containCannotHave(i) && containMustHave(i)) {
                     currItemsList = new LinkedList<>(i.getItemsSet());
@@ -274,6 +276,7 @@ public class GetFrequentItemSets {
                 System.out.println(sb.toString());
                 System.out.println("Total number of frequent " +(k-1) + "-itemsets = " + count);
             }
+            //}
             previousFk = Fk;
         }
         return;
