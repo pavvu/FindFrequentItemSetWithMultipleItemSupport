@@ -31,7 +31,7 @@ public class ItemSet {
         if(this.itemsSet == null) {
             return "[]";
         }
-        return this.itemsSet.toString();
+        return this.itemsSet.toString().replace("[", "").replace("]", "");
     }
 
     @Override

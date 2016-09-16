@@ -71,7 +71,13 @@ public class GetFrequentItemSets {
             count = singleItemCount.get(itemId);
             currSingleItem.setCount(count);
             currSingleItem.setItemID(itemId);
-            currSingleItem.setMIS(itemMisMap.get(itemId));
+            if(itemMisMap.containsKey(itemId)) {
+                currSingleItem.setMIS(itemMisMap.get(itemId));
+            }
+            else {
+                System.out.println("The MIS for the item " + itemId + " is not defined!");
+                throw new java.util.NoSuchElementException();
+            }
             currSingleItem.setSupport(count/noOfTransactions);
             M.add(currSingleItem);
             if(!singleItemMap.containsKey(itemId)) {
@@ -193,11 +199,11 @@ public class GetFrequentItemSets {
     }
 
     public static void generateF1() {
-        if(M == null) {
+        if(L == null) {
             return;
         }
-        for(SingleItem item : M) {
-            if(item.getSupport() > item.getMIS()) {
+        for(SingleItem item : L) {
+            if(item.getSupport() >= item.getMIS()) {
                 F1.add(item);
             }
         }
