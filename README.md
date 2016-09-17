@@ -6,26 +6,26 @@ Each Item has it's own Minimum Item Support, so we have to take into considerati
 
 ###The Minimum Support Apriori Algorithm.
 ```
-Algorithm MS-Apriori(T, MS, ?) // MS stores all MIS values
-1 M ? sort(I, MS); // according to MIS(i)’s stored in MS
-2 L ? init-pass(M, T); // make the first pass over T
-3 F1 ? {{l} | l ? L, l.count/n ? MIS(l)}; // n is the size of T
-4 for (k = 2; Fk?1 ? ?; k++) do
+Algorithm MS-Apriori(T, MS, SDC) // MS stores all MIS values
+1 M = sort(I, MS); // according to MIS(i)’s stored in MS
+2 L = init-pass(M, T); // make the first pass over T
+3 F1 = {{l} | l belongs to L, l.count/n >= MIS(l)}; // n is the size of T
+4 for (k = 2; Fk-1 != NULL; k++) do
 5   if k = 2 then
-6     Ck ? level2-candidate-gen(L, ?) // k = 2
-7   else Ck ? MScandidate-gen(Fk?1, ?)
+6     Ck = level2-candidate-gen(L, SDC) // k = 2
+7   else Ck = MScandidate-gen(Fk-1, SDC)
 8   endif;
-9   for each transaction t ? T do
-10    for each candidate c ? Ck do
+9   for each transaction t belongs to T do
+10    for each candidate c belongs to Ck do
 11      if c is contained in t then // c is a subset of t
 12        c.count++
 13      if c – {c[1]} is contained in t then // c without the first item
 14        (c – {c[1]}).count++
 15    endfor
 16  endfor
-17  Fk ? {c ? Ck | c.count/n ? MIS(c[1])}
+17  Fk = {c bleongs to Ck | c.count/n >= MIS(c[1])}
 18 endfor
-19 return F ? ?k Fk;
+19 return F = Union of all Fk;
 ```
 
 ###Level-2 Candidate Generation.
